@@ -1,19 +1,33 @@
+<Nav />
 <h1>Weather</h1>
 <button on:click='findWeather()'>find the weather</button>
+<div class="data">
+	{#if promise}
+		{#await promise}
+			<p>wait for it...</p>
+		{:then temp}
+			{#each Object.entries(temp) as [key, value]}
+				<p> {key} : {value} </p>
+			{/each}
+		{:catch error}
+			<p>Unable to fetch weather! ERROR :  {error}</p>
+		{/await}
+	{/if}
+</div>
 
-{#if promise}
-	{#await promise}
-		<p>wait for it...</p>
-	{:then temp}
-		<p>the weather is {temp}!</p>
-	{:catch error}
-		<p>Unable to fetch weather! ERROR :  {error}</p>
-	{/await}
-{/if}
+<style>
+	.data {
+		color: red;
+		border: 1px black solid;
+		width: auto;
+	}
+
+</style>
 
 
 <script>
 var axios = require('axios');
+import Nav from './Nav.html';
 const OPEN_WEATHER_MAP_URL = 'https://api.openweathermap.org/data/2.5/weather?appid=07d33c6aadec18df7d17712051da5a5d&units=metric';
 
 export default {
@@ -21,7 +35,7 @@ methods: {
   findWeather() {
     this.set({
       promise: new Promise((resolve, reject) => {
-        var encodedLocation = encodeURIComponent("woot");
+        var encodedLocation = encodeURIComponent("cincinnati");
         var requestUrl = `${OPEN_WEATHER_MAP_URL}&q=${encodedLocation}`;
         console.log(requestUrl);
         axios.get(requestUrl).then(function(res){
@@ -30,7 +44,7 @@ methods: {
             reject(Error(res.data.cod));
           } else{
             console.log(res.data.main.temp);
-            resolve(res.data.main.temp);
+            resolve(res.data.main);
           }
         },  res => {
                 reject (res && ((res.response && res.response.data && (res.response.data.message || res.response.data)) || (res.code))) || res;
@@ -38,7 +52,9 @@ methods: {
       })
     });
   }
-}
+},
+	components: { Nav }
+
 };
 
 </script>

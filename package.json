@@ -4,7 +4,7 @@
   "description": "A simple svelte app for news",
   "main": "index.js",
   "scripts": {
-    "start": "serve public"
+    "start": "webpack && serve public"
   },
   "author": "",
   "license": "ISC",
